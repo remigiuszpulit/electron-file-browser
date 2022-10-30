@@ -1,16 +1,15 @@
-import { Channels } from 'main/preload';
-
 declare global {
+  interface FileModel {
+    name: string;
+    isDirectory: boolean;
+    isDrive?: boolean;
+  }
   interface Window {
-    electron: {
-      ipcRenderer: {
-        sendMessage(channel: Channels, args: unknown[]): void;
-        on(
-          channel: Channels,
-          func: (...args: unknown[]) => void
-        ): (() => void) | undefined;
-        once(channel: Channels, func: (...args: unknown[]) => void): void;
-      };
+    api: {
+      directoryContents: (callback: string) => FileModel[];
+      homeDirectory: string;
+      openFile: (path: string, name: string) => void;
+      drivesList: () => { caption: string }[];
     };
   }
 }

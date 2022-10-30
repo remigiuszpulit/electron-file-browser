@@ -1,23 +1,32 @@
-import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { Dirent } from 'fs';
 
-export type Channels = 'ipc-example';
+const { readdir } = require('fs/promises');
+const { contextBridge, shell } = require('electron');
+const { lsDevices } = require('fs-hard-drive');
 
-contextBridge.exposeInMainWorld('electron', {
-  ipcRenderer: {
-    sendMessage(channel: Channels, args: unknown[]) {
-      ipcRenderer.send(channel, args);
-    },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-        func(...args);
-      ipcRenderer.on(channel, subscription);
+const homeDirectory = require('os').homedir();
 
-      return () => {
-        ipcRenderer.removeListener(channel, subscription);
-      };
-    },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
-    },
-  },
+const directoryContents = async (path: string) => {
+  const results = await readdir(path, { withFileTypes: true });
+  return results.map((entry: Dirent) => ({
+    name: entry.name,
+    isDirectory: entry.isDirectory(),
+  }));
+};
+
+const openFile = async (path: string, name: string) => {
+  const url = path + '\\' + name;
+  await shell.openExternal(url);
+};
+
+const drivesList = async () => {
+  const drives = await lsDevices();
+  return drives;
+};
+
+contextBridge.exposeInMainWorld('api', {
+  directoryContents,
+  homeDirectory,
+  openFile,
+  drivesList,
 });
