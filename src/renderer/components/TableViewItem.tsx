@@ -15,21 +15,26 @@ export default function TableViewItem({
   name,
   isDirectory,
   directory,
-  isDrive,
+  isDrive = false,
   setDirectory,
 }: TableViewItemProps) {
   const newPath =
-    directory.at(-1) === '\\' ? directory + name : directory + '\\' + name;
+    directory.at(-1) === '\\' ? directory + name : `${directory}\\${name}`;
   const openItem = () => {
-    isDrive
-      ? setDirectory(name + '\\')
-      : isDirectory
-      ? setDirectory(newPath)
-      : window.api.openFile(directory, name);
+    if (isDrive === true) {
+      setDirectory(`${name}\\`);
+    } else if (isDirectory === true) {
+      setDirectory(newPath);
+    } else {
+      window.api.openFile(directory, name);
+    }
   };
   return (
     <Container onDoubleClick={openItem}>
-      {isDrive ? <DriveIcon /> : isDirectory ? <FolderIcon /> : <FileIcon />}{' '}
+      {
+        // eslint-disable-next-line no-nested-ternary
+        isDrive ? <DriveIcon /> : isDirectory ? <FolderIcon /> : <FileIcon />
+      }
       <NameText>
         {name.substring(0, 12).concat(name.length > 15 ? '...' : '')}
       </NameText>{' '}
@@ -54,6 +59,8 @@ const Container = styled.div`
 
 const NameText = styled.p`
   font-size: 15px;
+  user-select: none;
+  -webkit-user-select: none;
   color: #161616;
   margin: unset;
 `;

@@ -21,13 +21,13 @@ node_modules
 release/app/dist
 release/build
 .erb/dll
-
+index.ejs
 .idea
 npm-debug.log.*
 *.css.d.ts
 *.sass.d.ts
 *.scss.d.ts
-
+.eslintrc.js
 # eslint ignores hidden directories by default:
 # https://github.com/eslint/eslint/issues/8429
 !.erb

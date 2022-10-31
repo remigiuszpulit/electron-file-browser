@@ -15,8 +15,13 @@ const directoryContents = async (path: string) => {
 };
 
 const openFile = async (path: string, name: string) => {
-  const url = path + '\\' + name;
-  await shell.openExternal(url);
+  const url = `${path}\\${name}`;
+  try {
+    await shell.openExternal(url);
+  } catch {
+    // eslint-disable-next-line no-console
+    console.error('Failed to load file');
+  }
 };
 
 const drivesList = async () => {

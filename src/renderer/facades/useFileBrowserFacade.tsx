@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useReducer } from 'react';
+
+interface BrowserStateModel {
+  directory: string;
+  history: string[];
+}
+
+interface ActionModel {
+  type: string;
+  payload: string;
+}
 
 export default function useFileBrowserFacade() {
-  interface BrowserStateModel {
-    directory: string;
-    history: string[];
-  }
-
-  interface ActionModel {
-    type: string;
-    payload: string;
-  }
-
   const initialBrowserState = {
     directory: '',
     history: [],
@@ -22,10 +22,11 @@ export default function useFileBrowserFacade() {
   ): BrowserStateModel {
     const history = JSON.parse(JSON.stringify(state.history));
     switch (action.type) {
-      case 'forward':
+      case 'forward': {
         const nextDir = history.shift();
         return { directory: nextDir, history };
-      case 'back':
+      }
+      case 'back': {
         history.unshift(state.directory);
         const targetDirectory = state.directory.split('\\');
         if (targetDirectory[1] === '') {
@@ -37,9 +38,9 @@ export default function useFileBrowserFacade() {
           const dir = targetDirectory.join('\\');
           return { directory: dir, history };
         }
-        const dir = targetDirectory[0] + '\\';
+        const dir = `${targetDirectory[0]}\\`;
         return { directory: dir, history };
-
+      }
       case 'open':
         return { directory: action.payload, history: [] };
 
@@ -53,7 +54,7 @@ export default function useFileBrowserFacade() {
     initialBrowserState
   );
   useEffect(() => {
-    const updateFiles = async (directory: string) => {
+    const updateFiles = async (directoryPath: string) => {
       if (directory === '') {
         try {
           const data = await window.api.drivesList();
@@ -62,13 +63,16 @@ export default function useFileBrowserFacade() {
           });
           setItems(drivesDirectories);
         } catch {
+          // eslint-disable-next-line no-console
           console.error('Error getting drives');
         }
       } else {
         try {
-          const filesData = await window.api.directoryContents(directory);
+          const filesData = await window.api.directoryContents(directoryPath);
           setItems(filesData);
         } catch {
+          dispatch({ type: 'back', payload: '' });
+          // eslint-disable-next-line no-console
           console.error('Error getting files');
         }
       }

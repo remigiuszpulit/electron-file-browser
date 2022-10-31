@@ -64,7 +64,14 @@ const createWindow = async () => {
   };
 
   mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#663399',
+      symbolColor: '#e8dcf8',
+      height: 32,
+    },
+    // frame: false,
     width: 1024,
     height: 728,
     icon: getAssetPath('icon.png'),

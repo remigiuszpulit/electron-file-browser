@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import SideMenu from './components/SideMenu';
-import FilesContainer from './components/FilesContainer';
 import TableViewItem from './components/TableViewItem';
 import '@fontsource/kanit';
 import useFileBrowserFacade from './facades/useFileBrowserFacade';
@@ -11,6 +10,9 @@ export default function App() {
   return (
     <>
       <GlobalStyle />
+      <TopBar>
+        <AppName>File Browser</AppName>
+      </TopBar>
       <Wrapper>
         <SideMenu>
           <SideMenuItem
@@ -105,7 +107,8 @@ export default function App() {
 const Wrapper = styled.div`
   font-family: 'Kanit';
   font-weight: 300;
-  min-height: 100vh;
+  min-height: calc(100vh - 32px);
+  padding-top: 32px;
   display: flex;
 `;
 const ColumnContainer = styled.div`
@@ -152,6 +155,14 @@ const StyledButton = styled.button<ButtonProps>`
   transition: all ease-in-out 0.3s;
 `;
 
+const FilesContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  max-height: calc(100vh - 200px);
+  overflow-y: scroll;
+  gap: 10px;
+`;
+
 const SideMenuItem = styled.button<ButtonProps>`
   width: 100%;
   height: 32px;
@@ -173,4 +184,22 @@ const SideMenuItem = styled.button<ButtonProps>`
       color: #161616;
   }
   `}
+`;
+
+const TopBar = styled.div`
+  -webkit-app-region: drag;
+  width: 100%;
+  height: 32px;
+  position: fixed;
+  padding-left: 16px;
+  background-color: rebeccapurple;
+`;
+
+const AppName = styled.h2`
+  font-family: 'Kanit';
+  margin: unset;
+  color: whitesmoke;
+  font-weight: 200;
+  font-size: 16px;
+  line-height: 32px;
 `;
